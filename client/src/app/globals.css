@@ -4,6 +4,10 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden;
+}
+.bg-image{
+  background-image: url("../assets/main-bg.png");
 }
 
 @layer utilities {
