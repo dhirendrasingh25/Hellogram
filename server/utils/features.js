@@ -24,7 +24,7 @@ export const sendToken = (res, user, code, message) => {
     expiresIn: "24h",
   });
   // console.log(token);
-  return res.status(code).cookie("security-token", token, cookieOptions).json({
+  return res.status(code).cookie("user", token, cookieOptions).json({
     success: true,
     user,
     message,

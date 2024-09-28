@@ -15,6 +15,7 @@ import {
 
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
 
  
 const formSchema = z.object({
@@ -40,21 +41,22 @@ export default function HomePage() {
         formData.append("upload_preset", "hellogram");
       
         try {
-          const response = await fetch(
-            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-            {
-              method: "POST",
-              body: formData,
-            }
-          );
+          // const response = await fetch(
+          //   `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+          //   {
+          //     method: "POST",
+          //     body: formData,
+          //   }
+          // );
       
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
+          // if (!response.ok) {
+          //   throw new Error(`HTTP error! Status: ${response.status}`);
+          // }
       
-          const data = await response.json();
-          console.log(data);
-          return data.secure_url as string;
+          // const data = await response.json();
+          // console.log(data);
+          return "sexy"
+          // return data.secure_url as string;
         } catch (error) {
           console.error(error);
           return undefined;
@@ -63,23 +65,32 @@ export default function HomePage() {
       
       async function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values);
-        const formData = new FormData();
-        formData.append("username", values.username);
-        formData.append("email", values.email);
-    
+        let link: string | undefined = undefined;
         if (values.avatar) {
           try {
-            const link : string | undefined = await handleFileUpload(values.avatar);
-            if (link) {
-              formData.append("profile", link); 
-            }
+            link  = await handleFileUpload(values.avatar);
+            console.log(link);
           } catch (error) {
             console.error("Error uploading avatar:", error);
           }
         }
-    
-        console.log("FormData:", formData);
+        const data: { name: string; email: string; profile?: string | null } = {
+          name: values.username,
+          email: values.email,
+        };
+        if (link) {
+          data.profile = link;
+        }
+        await fetch("/api/v1/auth", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        router.push("/chat");
         form.reset();
+        
       }
     
   return (
