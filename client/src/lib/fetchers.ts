@@ -14,5 +14,5 @@ export async function fetchUser(setUser: { (user: any): void; (arg0: any): void;
 export async function fetchUsers(mySelf:userProps, setUsers: any) {
     const data = await fetch("/api/v1/users");
     const myUsers = await data.json();
-    setUsers(myUsers.filter((user:any)=>user.email !== mySelf?.email))
+    setUsers(myUsers.users.filter((user:any)=>user.email !== mySelf?.email))
 }
