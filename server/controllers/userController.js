@@ -2,6 +2,7 @@ import { TryCatch } from "../middlewares/error.js";
 import { ErrorHandler } from "../utils/utility.js";
 import User from "../models/userModel.js";
 import { sendToken } from "../utils/features.js";
+import jwt from "jsonwebtoken";
 
 export const auth = TryCatch(async (req, res, next) => {
   const { email, name, profile } = req.body;
@@ -19,25 +20,10 @@ export const auth = TryCatch(async (req, res, next) => {
   }
 });
 
-export const login = TryCatch(async (req, res, next) => {
-  const { email, password } = req.body;
-
-  const user = await User.findOne({ email }).select("+password");
-
-  if (!user) return next(new ErrorHandler("Invalid Email or Password", 404));
-
-  const isMatch = await compare(password, user.password);
-
-  if (!isMatch)
-    return next(new ErrorHandler("Invalid Username or Password", 404));
-
-  sendToken(res, user, 200, `Welcome Back, ${user.name}`);
-});
-
-export const getProfile = TryCatch(async (req, res, next) => {
-  // console.log(req.params.id);
-  const user = await User.findById(req.params.id);
-  // console.log(user);
+export const getUser = TryCatch(async (req, res, next) => {
+  const token = req.cookies["user"];
+  const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+  const user = await User.findById(decodedData._id);
   if (!user) return next(new ErrorHandler("User not found", 404));
   sendToken(res, user, 200, `Welcome , ${user.name}`);
 });
