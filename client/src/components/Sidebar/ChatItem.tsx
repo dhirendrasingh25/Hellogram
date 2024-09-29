@@ -28,9 +28,10 @@ function ChatItem({ user }: { user: userProps }) {
               <div className='flex flex-col justify-between'>
                   <h3 className='font-semibold text-black text-lg'>{user?.name}</h3>
                   <p className='text-[#707991]'>User has Joined</p>
+                
               </div>
           </li>
-          <div className='divider my-0'></div>
+          <div className='border my-0'></div>
       </>
   )
 }
