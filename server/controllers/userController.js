@@ -22,10 +22,19 @@ export const auth = TryCatch(async (req, res, next) => {
 
 export const getUser = TryCatch(async (req, res, next) => {
   const token = req.cookies["user"];
-  const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-  const user = await User.findById(decodedData._id);
-  if (!user) return next(new ErrorHandler("User not found", 404));
-  sendToken(res, user, 200, `Welcome , ${user.name}`);
+  if (!token) {
+    return next(new ErrorHandler("JWT token not found", 401));
+  }
+  try {
+    const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decodedData._id);
+
+    if (!user) return next(new ErrorHandler("User not found", 404));
+
+    sendToken(res, user, 200, `Welcome, ${user.name}`);
+  } catch (error) {
+    return next(new ErrorHandler("Invalid Token", 401));
+  }
 });
 
 export const getAllUsers = TryCatch(async (req, res, next) => {

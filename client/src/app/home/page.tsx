@@ -64,7 +64,7 @@ export default function HomePage() {
       };
       
       async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+        // console.log(values);
         let link: string | undefined = undefined;
         if (values.avatar) {
           try {
